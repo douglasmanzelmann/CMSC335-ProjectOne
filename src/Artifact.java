@@ -1,20 +1,23 @@
-/**
- * Created by test on 1/24/15.
- */
-public class Artifact {
-    private static int numberOfArtifacts = 0;
+// File: Cave.java
+// Date: January 25, 2015
+// Author: Douglas Manzelmann
+// Purpose: The Artifact class contains attributes for each artifact
+
+public class Artifact extends CaveElement {
     private final int index;
     private String type;
-    private int creatureByIndex;
+    private int creatureIndex;
+    private String name;
 
-    public Artifact() {
-        index = numberOfArtifacts++;
+    public Artifact(int index, String type, int creatureIndex, String name) {
+        this.index = index;
+        this.type = type;
+        this.creatureIndex = creatureIndex;
+        this.name = name;
     }
 
-    public Artifact(String type, int creatureByIndex) {
-        index = numberOfArtifacts++;
-        this.type = type;
-        this.creatureByIndex = creatureByIndex;
+    public Artifact(int index, String type, int creatureIndex) {
+        this(index, type, creatureIndex, "");
     }
 
     public int getIndex() {
@@ -24,15 +27,10 @@ public class Artifact {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public String getName() {
+        return name;
     }
-
-    public int getCreatureByIndex() {
-        return creatureByIndex;
-    }
-
-    public void setCreatureByIndex(int creatureByIndex) {
-        this.creatureByIndex = creatureByIndex;
+    public String toString() {
+        return("a: " + index + " : " + type + " : " + creatureIndex + " : " + name);
     }
 }

@@ -1,20 +1,20 @@
-/**
- * Created by test on 1/24/15.
- */
-public class Treasure {
-    private static int numberOfTreasures = 0;
+// File: Cave.java
+// Date: January 25, 2015
+// Author: Douglas Manzelmann
+// Purpose: The Creature class contains attributes for each creature
+//          and each artifact and treasure that it possesses
+
+public class Treasure extends CaveElement {
     private final int index;
     private String type;
-    private int creatureByIndex;
-    private int weight;
+    private int creatureIndex;
+    private double weight;
     private int value;
 
-    public Treasure() {
-        index = numberOfTreasures++;
-    }
-
-    public Treasure(String type, int weight, int value) {
-        index = numberOfTreasures++;
+    public Treasure(int index, String type, int creatureIndex, double weight, int value) {
+        this.index = index;
+        this.type = type;
+        this.creatureIndex = creatureIndex;
         this.weight = weight;
         this.value = value;
     }
@@ -22,36 +22,19 @@ public class Treasure {
     public int getIndex() {
         return index;
     }
+
     public int getValue() {
         return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    public int getWeight() {
-        return weight;
-    }
-
-    public void setWeight(int weight) {
-        this.weight = weight;
-    }
-
-    public int getCreatureByIndex() {
-        return creatureByIndex;
-    }
-
-    public void setCreatureByIndex(int creatureByIndex) {
-        this.creatureByIndex = creatureByIndex;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
+
+    public String toString() {
+        return("t: " + index + " : " + type + " : " + creatureIndex + " : " +
+                weight + " : " + value);
     }
 
 }
