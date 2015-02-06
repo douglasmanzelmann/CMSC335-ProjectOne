@@ -33,4 +33,5 @@ public class Artifact extends CaveElement {
     public String toString() {
         return("a: " + index + " : " + type + " : " + creatureIndex + " : " + name);
     }
+
 }

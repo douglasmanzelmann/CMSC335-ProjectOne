@@ -4,6 +4,8 @@
 // Purpose: The Creature class contains attributes for each creature
 //          and each artifact and treasure that it possesses
 
+import java.util.ArrayList;
+
 public class Treasure extends CaveElement {
     private final int index;
     private String type;
@@ -19,6 +21,15 @@ public class Treasure extends CaveElement {
         this.value = value;
     }
 
+    //copy constructor
+    public Treasure (Treasure treasure) {
+        this.index = treasure.index;
+        this.type = treasure.type;
+        this.creatureIndex = treasure.creatureIndex;
+        this.weight = treasure.weight;
+        this.value = treasure.value;
+    }
+
     public int getIndex() {
         return index;
     }
@@ -31,6 +42,9 @@ public class Treasure extends CaveElement {
         return type;
     }
 
+    public double getWeight() {
+        return weight;
+    }
 
     public String toString() {
         return("t: " + index + " : " + type + " : " + creatureIndex + " : " +

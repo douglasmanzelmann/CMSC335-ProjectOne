@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 // File: Cave.java
@@ -69,6 +71,10 @@ public class Creature extends CaveElement {
     public Creature(int index, String type, String name, int partyID,
                     int empathy, int fear, int carryingCapacity) {
         this(index, type, name, partyID, empathy, fear, carryingCapacity, 0, 0, 0);
+    }
+
+    private ArrayList<Treasure> cloneList(ArrayList<Treasure> treasureList) {
+
     }
 
     /**
@@ -156,6 +162,26 @@ public class Creature extends CaveElement {
     public void addTreasure(Treasure treasure) {
         treasures.add(treasure);
         treasuresKeyValue.put(treasure.getIndex(), treasure);
+    }
+
+    private ArrayList<Treasure> cloneTreasures(ArrayList<Treasure> treasuresToClone) {
+        ArrayList<Treasure> clonedTreasureList = new ArrayList<Treasure>();
+
+        for (Treasure treasure : treasuresToClone)
+            clonedTreasureList.add(new Treasure(treasure));
+
+        return clonedTreasureList;
+    }
+
+    public ArrayList<Treasure> sortTreasuresByWeight() {
+        ArrayList<Treasure> treasuresSortedByWeight = cloneTreasures(treasures);
+        Collections.sort(treasuresSortedByWeight, new TreasureWeightComparator());
+
+        return treasuresSortedByWeight;
+    }
+
+    public ArrayList<Treasure> sortTreasuresByValue() {
+
     }
 
 
