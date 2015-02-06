@@ -73,9 +73,6 @@ public class Creature extends CaveElement {
         this(index, type, name, partyID, empathy, fear, carryingCapacity, 0, 0, 0);
     }
 
-    private ArrayList<Treasure> cloneList(ArrayList<Treasure> treasureList) {
-
-    }
 
     /**
      * Searches for either a treasure or artifact by index
@@ -180,9 +177,9 @@ public class Creature extends CaveElement {
         return treasuresSortedByWeight;
     }
 
-    public ArrayList<Treasure> sortTreasuresByValue() {
+    //public ArrayList<Treasure> sortTreasuresByValue() {
 
-    }
+    //}
 
 
     public int getFear() {
