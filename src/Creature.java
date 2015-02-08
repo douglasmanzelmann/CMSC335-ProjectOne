@@ -170,16 +170,21 @@ public class Creature extends CaveElement {
         return clonedTreasureList;
     }
 
-    public ArrayList<Treasure> sortTreasuresByWeight() {
-        ArrayList<Treasure> treasuresSortedByWeight = cloneTreasures(treasures);
-        Collections.sort(treasuresSortedByWeight, new TreasureWeightComparator());
-
-        return treasuresSortedByWeight;
+    public void sortTreasuresByWeight() {
+        Collections.sort(treasures, new TreasureWeightComparator());
     }
 
-    //public ArrayList<Treasure> sortTreasuresByValue() {
+    public void sortTreasuresByValue() {
+        Collections.sort(treasures, new TreasureValueComparator());
+    }
 
-    //}
+    public void sortArtifactByName() {
+        Collections.sort(artifacts, new ArtifactNameComparator());
+    }
+
+    public void sortArtifactsByType() {
+        Collections.sort(artifacts, new ArtifactTypeComparator());
+    }
 
 
     public int getFear() {

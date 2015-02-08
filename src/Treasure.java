@@ -5,6 +5,7 @@
 //          and each artifact and treasure that it possesses
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Treasure extends CaveElement {
     private final int index;

@@ -20,6 +20,13 @@ public class Artifact extends CaveElement {
         this(index, type, creatureIndex, "");
     }
 
+    public Artifact(Artifact artifact) {
+        this.index = artifact.index;
+        this.type = artifact.type;
+        this.creatureIndex = artifact.creatureIndex;
+        this.name = artifact.name;
+    }
+
     public int getIndex() {
         return index;
     }

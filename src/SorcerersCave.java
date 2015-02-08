@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -23,8 +24,11 @@ public class SorcerersCave extends JFrame implements ActionListener {
     private JButton searchButton;
     private JTextArea internalDataStructure;
     private JScrollPane scrollPane;
-    JComboBox<String> jcb = new JComboBox<String>();
-
+    private JComboBox<String> searchOptions = new JComboBox<String>();
+    private JComboBox<String> creatureSort = new JComboBox<>();
+    private JComboBox<String> treasureSort = new JComboBox<>();
+    private JComboBox<String> artifactSort = new JComboBox<>();
+    private JButton sortButton;
 
     public static void main(String[] args) {
         SorcerersCave sc = new SorcerersCave();
@@ -35,22 +39,69 @@ public class SorcerersCave extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         setTitle("Sorcerer's Cave");
         setSize(600,300);
+        setMinimumSize(new Dimension(600, 300));
+        setMaximumSize(new Dimension(1000, 600));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
-        setLayout(new FlowLayout());
+        setLayout(new BorderLayout());
         cave = new Cave();
 
         title = new JLabel("Sorcerer's Cave");
+
+        // Top Row
+        // Contains: File Choose, Search Box,
+        // Search Type and Search Buton
         fc = new JFileChooser(new File("."));
         openButton = new JButton("Open Data File");
         openButton.addActionListener(this);
 
         searchLabel = new JLabel();
         searchButton = new JButton("Search");
-        searchField = new JTextField(10);
         searchButton.addActionListener(this);
+        searchField = new JTextField(10);
 
+        searchOptions.addItem("Index");
+        searchOptions.addItem("Type");
+        searchOptions.addItem("Name");
+
+        JPanel topRowPanel = new JPanel();
+        topRowPanel.add(openButton);
+        topRowPanel.add(searchLabel);
+        topRowPanel.add(searchField);
+        topRowPanel.add(searchOptions);
+        topRowPanel.add(searchButton);
+
+        // Middle Row
+        // Contains: Sorting options for Creatures, Artifacts and Treasures
+        creatureSort.addItem(" ");
+        creatureSort.addItem("Name");
+        creatureSort.addItem("Age");
+        creatureSort.addItem("Height");
+        creatureSort.addItem("Weight");
+        creatureSort.addItem("Empathy");
+        creatureSort.addItem("Fear");
+        creatureSort.addItem("Carrying Capacity");
+
+        treasureSort.addItem(" ");
+        treasureSort.addItem("Weight");
+        treasureSort.addItem("Value");
+
+        artifactSort.addItem(" ");
+        artifactSort.addItem("Name");
+        artifactSort.addItem("Type");
+
+        sortButton = new JButton("Sort");
+        sortButton.addActionListener(this);
+
+        JPanel sortPanel = new JPanel();
+        sortPanel.add(creatureSort);
+        sortPanel.add(treasureSort);
+        sortPanel.add(artifactSort);
+        sortPanel.add(sortButton);
+
+        // Bottom Row
+        // Contains: A text area to display the internal data structure
         internalDataStructure = new JTextArea();
         internalDataStructure.setRows(10);
         internalDataStructure.setColumns(50);
@@ -58,19 +109,9 @@ public class SorcerersCave extends JFrame implements ActionListener {
 
         scrollPane = new JScrollPane(internalDataStructure);
 
-        jcb.addItem("Index");
-        jcb.addItem("Type");
-        jcb.addItem("Name");
-
-        JPanel jp = new JPanel();
-        jp.add(openButton);
-        jp.add(searchLabel);
-        jp.add(searchField);
-        jp.add(jcb);
-        jp.add(searchButton);
-
-        add(jp, BorderLayout.PAGE_START);
-        add(scrollPane, BorderLayout.CENTER);
+        add(topRowPanel, BorderLayout.NORTH);
+        add(sortPanel, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.SOUTH);
 
         validate();
     }
@@ -96,7 +137,7 @@ public class SorcerersCave extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == searchButton) { // if the user is search the data
-            if (jcb.getSelectedItem().equals("Index")) { // the user is searching for an index
+            if (searchOptions.getSelectedItem().equals("Index")) { // the user is searching for an index
                 int index = Integer.parseInt(searchField.getText());
                 CaveElement result = cave.searchByIndex(index);
 
@@ -107,7 +148,7 @@ public class SorcerersCave extends JFrame implements ActionListener {
                 }
             }
 
-            if (jcb.getSelectedItem().equals("Name")) { // the user is searching for a name
+            if (searchOptions.getSelectedItem().equals("Name")) { // the user is searching for a name
                 // the method searchByName for the Cave class searches all the appropriate
                 // classes for the text entered in the searchField
                 ArrayList<CaveElement> elements = cave.searchByName(searchField.getText());
@@ -116,7 +157,7 @@ public class SorcerersCave extends JFrame implements ActionListener {
                 }
             }
 
-            if (jcb.getSelectedItem().equals("Type")) { // the user is searching for a type
+            if (searchOptions.getSelectedItem().equals("Type")) { // the user is searching for a type
                 // the method searchByType for the Cave class searches all the appropriate
                 // classes for the text entered in the searchField
                 ArrayList<CaveElement> elements = cave.searchByType(searchField.getText());
@@ -124,6 +165,63 @@ public class SorcerersCave extends JFrame implements ActionListener {
                     internalDataStructure.append(c.toString() + "\n");
                 }
             }
+        }
+
+        if (e.getSource() == sortButton) {
+            if (!creatureSort.getSelectedItem().equals(" ")) {
+                String creatureSortOption = creatureSort.getSelectedItem().toString();
+                ArrayList<Party> parties = (ArrayList<Party>)cave.getParties();
+                // sort options here
+                switch(creatureSortOption) {
+                    case "Name":
+                        for (Party p : parties)
+                            p.creatureSortByName();
+                        break;
+                    case "Age":
+                        for (Party p : parties)
+                            p.creatureSortByAge();
+                        break;
+                    case "Height":
+                        for (Party p : parties)
+                            p.creatureSortByWeight();
+                        break;
+                    case "Weight":
+                        for (Party p : parties)
+                            p.creatureSortByWeight();
+                        break;
+                    case "Empathy":
+                        for (Party p : parties)
+                            p.creatureSortByEmpathy();
+                        break;
+                    case "Fear":
+                        for (Party p : parties)
+                            p.creatureSortByFear();
+                        break;
+                    case "Carrying Capacity":
+                        for (Party p : parties)
+                            p.creatureSortByName();
+                        break;
+                }
+            }
+            if (!treasureSort.getSelectedItem().equals(" ")) {
+                ArrayList<Party> parties = (ArrayList<Party>)cave.getParties();
+
+                String treasureSortOption = treasureSort.getSelectedItem().toString();
+
+                if (treasureSortOption.equals("Value")) {
+                    for (Party p : parties) {
+
+                    }
+                }
+
+
+            }
+            if (!artifactSort.getSelectedItem().equals(" ")) {
+
+            }
+
+            internalDataStructure.setText("Sorcerer's Guild: \n");
+            displayInternalDataStructures();
         }
     }
 

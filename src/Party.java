@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 
@@ -71,6 +73,34 @@ public class Party extends CaveElement{
         }
 
         return null;
+    }
+
+    public void creatureSortByName() {
+        Collections.sort(creatures, new CreatureNameComparator());
+    }
+
+    public void creatureSortByAge() {
+        Collections.sort(creatures, new CreatureAgeComparator());
+    }
+
+    public void creatureSortByHeight() {
+        Collections.sort(creatures, new CreatureHeightComparator());
+    }
+
+    public void creatureSortByWeight() {
+        Collections.sort(creatures, new CreatureWeightComparator());
+    }
+
+    public void creatureSortByEmpathy() {
+        Collections.sort(creatures, new CreatureEmpathyComparator());
+    }
+
+    public void creatureSortByFear() {
+        Collections.sort(creatures, new CreatureFearComparator());
+    }
+
+    public void creatureSortByCarryingCapacity() {
+        Collections.sort(creatures, new CreatureCarryingCapacityComparator());
     }
 
     /**
