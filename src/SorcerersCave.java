@@ -1,10 +1,12 @@
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -15,16 +17,13 @@ import java.util.Scanner;
 
 public class SorcerersCave extends JFrame implements ActionListener {
     private Cave cave;
-    private JLabel title;
     private JButton openButton;
     private JFileChooser fc;
-    private Scanner dataFile;
-    private JLabel searchLabel;
     private JTextField searchField;
     private JButton searchButton;
-    private JTextArea internalDataStructure;
-    private JScrollPane scrollPane;
-    private JComboBox<String> searchOptions = new JComboBox<String>();
+    DefaultMutableTreeNode top;
+    private JTree internalDataStructure;
+    private JComboBox<String> searchOptions = new JComboBox<>();
     private JComboBox<String> creatureSort = new JComboBox<>();
     private JComboBox<String> treasureSort = new JComboBox<>();
     private JComboBox<String> artifactSort = new JComboBox<>();
@@ -35,6 +34,9 @@ public class SorcerersCave extends JFrame implements ActionListener {
     }
 
     public SorcerersCave() {
+        JScrollPane scrollPane;
+        JLabel searchLabel;
+
         pack();
         setLocationRelativeTo(null);
         setTitle("Sorcerer's Cave");
@@ -47,8 +49,6 @@ public class SorcerersCave extends JFrame implements ActionListener {
         setLayout(new BorderLayout());
         cave = new Cave();
 
-        title = new JLabel("Sorcerer's Cave");
-
         // Top Row
         // Contains: File Choose, Search Box,
         // Search Type and Search Buton
@@ -60,6 +60,13 @@ public class SorcerersCave extends JFrame implements ActionListener {
         searchButton = new JButton("Search");
         searchButton.addActionListener(this);
         searchField = new JTextField(10);
+        searchField.setText("Enter search term");
+        searchField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                searchField.setText("");
+            }
+        });
 
         searchOptions.addItem("Index");
         searchOptions.addItem("Type");
@@ -74,7 +81,7 @@ public class SorcerersCave extends JFrame implements ActionListener {
 
         // Middle Row
         // Contains: Sorting options for Creatures, Artifacts and Treasures
-        creatureSort.addItem(" ");
+        creatureSort.addItem("Sort Creatures by...");
         creatureSort.addItem("Name");
         creatureSort.addItem("Age");
         creatureSort.addItem("Height");
@@ -83,11 +90,11 @@ public class SorcerersCave extends JFrame implements ActionListener {
         creatureSort.addItem("Fear");
         creatureSort.addItem("Carrying Capacity");
 
-        treasureSort.addItem(" ");
+        treasureSort.addItem("Sort Treasures by...");
         treasureSort.addItem("Weight");
         treasureSort.addItem("Value");
 
-        artifactSort.addItem(" ");
+        artifactSort.addItem("Sort artifacts by...");
         artifactSort.addItem("Name");
         artifactSort.addItem("Type");
 
@@ -100,18 +107,23 @@ public class SorcerersCave extends JFrame implements ActionListener {
         sortPanel.add(artifactSort);
         sortPanel.add(sortButton);
 
+        JPanel topTwoRows = new JPanel(new BorderLayout());
+        topTwoRows.add(topRowPanel, BorderLayout.NORTH);
+        topTwoRows.add(sortPanel, BorderLayout.SOUTH);
+
         // Bottom Row
         // Contains: A text area to display the internal data structure
-        internalDataStructure = new JTextArea();
-        internalDataStructure.setRows(10);
-        internalDataStructure.setColumns(50);
-        internalDataStructure.setText("Sorcerer's Guild: \n");
+        //internalDataStructure.setRows(10);
+        //internalDataStructure.setColumns(50);
+        //internalDataStructure.setText("Sorcerer's Guild: \n");
+        //scrollPane = new JScrollPane(internalDataStructure);
+        top = new DefaultMutableTreeNode("Sorcerer's Guild");
+        displayInternalDataStructures(top);
+        internalDataStructure = new JTree(top);
+        JScrollPane treeView = new JScrollPane(internalDataStructure);
 
-        scrollPane = new JScrollPane(internalDataStructure);
-
-        add(topRowPanel, BorderLayout.NORTH);
-        add(sortPanel, BorderLayout.CENTER);
-        add(scrollPane, BorderLayout.SOUTH);
+        add(topTwoRows, BorderLayout.NORTH);
+        add(treeView, BorderLayout.CENTER);
 
         validate();
     }
@@ -119,9 +131,10 @@ public class SorcerersCave extends JFrame implements ActionListener {
     /**
      * An Event listener method which listens for two button clicks,
      * openButton and searchButton
-     * @param e
+     * @param e event
      */
     public void actionPerformed(ActionEvent e) {
+        Scanner dataFile;
         if (e.getSource() == openButton) { // if the user is opening a data file
             int option = fc.showOpenDialog(SorcerersCave.this);
 
@@ -129,7 +142,7 @@ public class SorcerersCave extends JFrame implements ActionListener {
                 if (option == JFileChooser.APPROVE_OPTION) {
                     dataFile = new Scanner(fc.getSelectedFile());
                     initGameState(dataFile);
-                    displayInternalDataStructures();
+                    displayInternalDataStructures(top);
                 }
             } catch (FileNotFoundException o) {
 
@@ -141,11 +154,11 @@ public class SorcerersCave extends JFrame implements ActionListener {
                 int index = Integer.parseInt(searchField.getText());
                 CaveElement result = cave.searchByIndex(index);
 
-                if (result == null)
-                    internalDataStructure.append("Index: " + index + " does not exist");
-                else {
-                    internalDataStructure.append(result.toString() + "\n");
-                }
+                //if (result == null)
+                    //internalDataStructure.append("Index: " + index + " does not exist");
+                //else
+                    //internalDataStructure.append(result.toString() + "\n");
+
             }
 
             if (searchOptions.getSelectedItem().equals("Name")) { // the user is searching for a name
@@ -153,7 +166,7 @@ public class SorcerersCave extends JFrame implements ActionListener {
                 // classes for the text entered in the searchField
                 ArrayList<CaveElement> elements = cave.searchByName(searchField.getText());
                 for (CaveElement c : elements) {
-                    internalDataStructure.append(c.toString() + "\n");
+                    //internalDataStructure.append(c.toString() + "\n");
                 }
             }
 
@@ -162,13 +175,13 @@ public class SorcerersCave extends JFrame implements ActionListener {
                 // classes for the text entered in the searchField
                 ArrayList<CaveElement> elements = cave.searchByType(searchField.getText());
                 for (CaveElement c : elements) {
-                    internalDataStructure.append(c.toString() + "\n");
+                    //internalDataStructure.append(c.toString() + "\n");
                 }
             }
         }
 
         if (e.getSource() == sortButton) {
-            if (!creatureSort.getSelectedItem().equals(" ")) {
+            if (!creatureSort.getSelectedItem().equals("Sort Creatures by...")) {
                 String creatureSortOption = creatureSort.getSelectedItem().toString();
                 ArrayList<Party> parties = (ArrayList<Party>)cave.getParties();
                 // sort options here
@@ -183,7 +196,7 @@ public class SorcerersCave extends JFrame implements ActionListener {
                         break;
                     case "Height":
                         for (Party p : parties)
-                            p.creatureSortByWeight();
+                            p.creatureSortByHeight();
                         break;
                     case "Weight":
                         for (Party p : parties)
@@ -199,29 +212,56 @@ public class SorcerersCave extends JFrame implements ActionListener {
                         break;
                     case "Carrying Capacity":
                         for (Party p : parties)
-                            p.creatureSortByName();
+                            p.creatureSortByCarryingCapacity();
                         break;
                 }
             }
-            if (!treasureSort.getSelectedItem().equals(" ")) {
+            if (!treasureSort.getSelectedItem().equals("Sort Treasures by...")) {
                 ArrayList<Party> parties = (ArrayList<Party>)cave.getParties();
 
                 String treasureSortOption = treasureSort.getSelectedItem().toString();
 
                 if (treasureSortOption.equals("Value")) {
                     for (Party p : parties) {
-
+                        for (Creature c : p.getCreatures()) {
+                            c.sortTreasuresByValue();
+                        }
                     }
                 }
 
-
+                else if (treasureSortOption.equals("Weight")) {
+                    for (Party p : parties) {
+                        for (Creature c : p.getCreatures()) {
+                            c.sortTreasuresByWeight();
+                        }
+                    }
+                }
             }
-            if (!artifactSort.getSelectedItem().equals(" ")) {
 
+            if (!artifactSort.getSelectedItem().equals("Sort Artifacts by...")) {
+                ArrayList<Party> parties = (ArrayList<Party>)cave.getParties();
+                String artifactSortOption = artifactSort.getSelectedItem().toString();
+
+                if (artifactSortOption.equals("Name")) {
+                    for (Party p : parties) {
+                        for (Creature c : p.getCreatures()) {
+                            c.sortArtifactByName();
+                        }
+                    }
+                }
+
+                else if (artifactSortOption.equals("Type")) {
+                    for (Party p : parties) {
+                        for (Creature c : p.getCreatures()) {
+                            c.sortArtifactsByType();
+                        }
+                    }
+                }
             }
 
-            internalDataStructure.setText("Sorcerer's Guild: \n");
-            displayInternalDataStructures();
+            //internalDataStructure.setText("Sorcerer's Guild: \n");
+            internalDataStructure.setModel(null);
+            displayInternalDataStructures(new DefaultMutableTreeNode("Sorcerer's Guild"));
         }
     }
 
@@ -360,26 +400,32 @@ public class SorcerersCave extends JFrame implements ActionListener {
      * Append the relationship between CaveElements in the
      * internalDataStructure text area.
      */
-    public void displayInternalDataStructures() {
+    public void displayInternalDataStructures(DefaultMutableTreeNode top) {
 
         for (Party party : cave.getParties()) {
-            internalDataStructure.append(party.toString());
-            internalDataStructure.append("\n");
+            DefaultMutableTreeNode partyNode = new DefaultMutableTreeNode(party.toString());
+            top.add(partyNode);
 
             for (Creature creature : party.getCreatures()) {
-                internalDataStructure.append("\t" + creature.toString());
-                internalDataStructure.append("\n");
+                DefaultMutableTreeNode creatureNode = new DefaultMutableTreeNode(creature.toString());
+                partyNode.add(creatureNode);
 
                 for (Treasure treasure : creature.getTreasures()) {
-                    internalDataStructure.append("\t\t" + treasure.toString());
-                    internalDataStructure.append("\n");
+                    DefaultMutableTreeNode treasureNode = new DefaultMutableTreeNode(treasure.toString());
+                    creatureNode.add(treasureNode);
                 }
 
                 for (Artifact artifact : creature.getArtifacts()) {
-                    internalDataStructure.append("\t\t" + artifact.toString());
-                    internalDataStructure.append("\n");
+                    DefaultMutableTreeNode artifactNode = new DefaultMutableTreeNode(artifact.toString());
+                    creatureNode.add(artifactNode);
                 }
             }
         }
+
+
+    }
+
+    public void displayTree() {
+
     }
 }
