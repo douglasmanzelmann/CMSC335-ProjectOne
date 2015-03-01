@@ -1,8 +1,6 @@
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-
 
 // File: Cave.java
 // Date: January 25, 2015
@@ -12,7 +10,7 @@ import java.util.HashMap;
 //          artifacts
 
 
-public class Party extends CaveElement{
+public class Party extends CaveElement {
     private final int index;
     private String name;
     private ArrayList<Creature> creatures;
@@ -75,30 +73,51 @@ public class Party extends CaveElement{
         return null;
     }
 
+    /**
+     * Sort creatures by name
+     */
     public void creatureSortByName() {
         Collections.sort(creatures, new CreatureNameComparator());
     }
 
+    /**
+     * Sort creatures by age
+     */
     public void creatureSortByAge() {
         Collections.sort(creatures, new CreatureAgeComparator());
     }
 
+    /**
+     * Sort creatures by height
+     */
     public void creatureSortByHeight() {
         Collections.sort(creatures, new CreatureHeightComparator());
     }
 
+    /**
+     * Sort creatures by weight
+     */
     public void creatureSortByWeight() {
         Collections.sort(creatures, new CreatureWeightComparator());
     }
 
+    /**
+     * Sort creatures by empathy
+     */
     public void creatureSortByEmpathy() {
         Collections.sort(creatures, new CreatureEmpathyComparator());
     }
 
+    /**
+     * Sort creatures by fear
+     */
     public void creatureSortByFear() {
         Collections.sort(creatures, new CreatureFearComparator());
     }
 
+    /**
+     * Sort creatures by carryign capacity
+     */
     public void creatureSortByCarryingCapacity() {
         Collections.sort(creatures, new CreatureCarryingCapacityComparator());
     }
@@ -129,7 +148,7 @@ public class Party extends CaveElement{
 
     /**
      * toString implementation
-     * @return
+     * @return the string representation of a Party
      */
     public String toString() {
         return("p: " + index + " Name: " + name);

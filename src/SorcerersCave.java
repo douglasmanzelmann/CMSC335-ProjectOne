@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,14 +21,19 @@ public class SorcerersCave extends JFrame implements ActionListener {
     private JButton openButton;
     private JFileChooser fc;
     private JTextField searchField;
+    private JTextArea searchResults;
     private JButton searchButton;
-    DefaultMutableTreeNode top;
+    private DefaultTreeModel treeModel;
+    private DefaultMutableTreeNode top;
     private JTree internalDataStructure;
     private JComboBox<String> searchOptions = new JComboBox<>();
     private JComboBox<String> creatureSort = new JComboBox<>();
     private JComboBox<String> treasureSort = new JComboBox<>();
     private JComboBox<String> artifactSort = new JComboBox<>();
     private JButton sortButton;
+    private JScrollPane treeView;
+    private JPanel jobsPanel;
+    private JScrollPane jobsScrollPane;
 
     public static void main(String[] args) {
         SorcerersCave sc = new SorcerersCave();
@@ -40,9 +46,9 @@ public class SorcerersCave extends JFrame implements ActionListener {
         pack();
         setLocationRelativeTo(null);
         setTitle("Sorcerer's Cave");
-        setSize(600,300);
-        setMinimumSize(new Dimension(600, 300));
-        setMaximumSize(new Dimension(1000, 600));
+        setSize(700,400);
+        setMinimumSize(new Dimension(700, 800));
+        setMaximumSize(new Dimension(1280, 1024));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
@@ -118,13 +124,32 @@ public class SorcerersCave extends JFrame implements ActionListener {
         //internalDataStructure.setText("Sorcerer's Guild: \n");
         //scrollPane = new JScrollPane(internalDataStructure);
         top = new DefaultMutableTreeNode("Sorcerer's Guild");
-        displayInternalDataStructures(top);
-        internalDataStructure = new JTree(top);
-        JScrollPane treeView = new JScrollPane(internalDataStructure);
+        treeModel = new DefaultTreeModel(top);
+        internalDataStructure = new JTree(treeModel);
+        treeView = new JScrollPane(internalDataStructure);
+        treeView.setSize(700, 150);
+        treeView.setMinimumSize(new Dimension(700, 150));
+        searchResults = new JTextArea();
+        searchResults.setMinimumSize(new Dimension(700, 100));
+        searchResults.setText("");
+        searchResults.setRows(3);
+        searchResults.setColumns(50);
+        JSplitPane internalData = new JSplitPane(JSplitPane.VERTICAL_SPLIT, treeView, searchResults);
+        internalData.setOneTouchExpandable(true);
+        internalData.setContinuousLayout(true);
+
+        // Jobs panel
+        jobsPanel = new JPanel(new GridLayout(0,6,2,5));
+        jobsPanel.setSize(700, 150);
+        jobsPanel.setMinimumSize(new Dimension(700, 200));
+        jobsPanel.setMaximumSize(new Dimension(700, 200));
+        jobsScrollPane = new JScrollPane(jobsPanel);
+        jobsScrollPane.setMaximumSize(new Dimension(700, 200));
 
         add(topTwoRows, BorderLayout.NORTH);
-        add(treeView, BorderLayout.CENTER);
-
+        add(internalData, BorderLayout.CENTER);
+        add(jobsScrollPane, BorderLayout.SOUTH);
+        //add(searchResults, BorderLayout.AFTER_LAST_LINE);
         validate();
     }
 
@@ -154,10 +179,12 @@ public class SorcerersCave extends JFrame implements ActionListener {
                 int index = Integer.parseInt(searchField.getText());
                 CaveElement result = cave.searchByIndex(index);
 
-                //if (result == null)
-                    //internalDataStructure.append("Index: " + index + " does not exist");
-                //else
-                    //internalDataStructure.append(result.toString() + "\n");
+                if (result == null) {
+                    searchResults.append("Index: " + index + " does not exist");
+                }
+                else {
+                    searchResults.append(result.toString() + "\n");
+                }
 
             }
 
@@ -166,7 +193,7 @@ public class SorcerersCave extends JFrame implements ActionListener {
                 // classes for the text entered in the searchField
                 ArrayList<CaveElement> elements = cave.searchByName(searchField.getText());
                 for (CaveElement c : elements) {
-                    //internalDataStructure.append(c.toString() + "\n");
+                    searchResults.append(c.toString() + "\n");
                 }
             }
 
@@ -175,7 +202,7 @@ public class SorcerersCave extends JFrame implements ActionListener {
                 // classes for the text entered in the searchField
                 ArrayList<CaveElement> elements = cave.searchByType(searchField.getText());
                 for (CaveElement c : elements) {
-                    //internalDataStructure.append(c.toString() + "\n");
+                    searchResults.append(c.toString() + "\n");
                 }
             }
         }
@@ -259,8 +286,6 @@ public class SorcerersCave extends JFrame implements ActionListener {
                 }
             }
 
-            //internalDataStructure.setText("Sorcerer's Guild: \n");
-            internalDataStructure.setModel(null);
             displayInternalDataStructures(new DefaultMutableTreeNode("Sorcerer's Guild"));
         }
     }
@@ -292,6 +317,8 @@ public class SorcerersCave extends JFrame implements ActionListener {
                 insertTreasure(parts);
             else if (parts[0].trim().equals("a"))
                 insertArtifact(parts);
+            else if (parts[0].trim().equals("j"))
+                insertJob(parts);
 
         }
 
@@ -395,12 +422,48 @@ public class SorcerersCave extends JFrame implements ActionListener {
         }
     }
 
+    public void insertJob(String[] attributes) {
+        Job input;
+        Creature creature = null;
+
+        int index = Integer.parseInt(attributes[1].trim());
+        String name = attributes[2].trim();
+        int creatureIndex = Integer.parseInt(attributes[3].trim());
+        int time = Integer.parseInt(attributes[4].trim());
+
+        for (Party p : cave.getParties()) {
+            if (p.getCreatureByID(creatureIndex) != null) {
+                creature = p.getCreatureByID(creatureIndex);
+                break;
+            }
+        }
+
+        if (attributes.length > 5) {
+            String requiredArtifact = attributes[5].trim();
+            int requiredArtifactQuantity = Integer.parseInt(attributes[6].trim());
+            input = new Job(index, name, creature, time, requiredArtifact, requiredArtifactQuantity);
+        }
+        else {
+            input = new Job(index, name, creature, time);
+        }
+
+        for (Party party : cave.getParties()) {
+            if (party.getCreatureByID(creatureIndex) != null) {
+                //Creature creature = party.getCreatureByID(creatureIndex);
+                //input.setCreatureName(creature.getName());
+                creature.addJob(input);
+            }
+        }
+    }
+
     /**
      * Display the internal data structures.
      * Append the relationship between CaveElements in the
      * internalDataStructure text area.
      */
     public void displayInternalDataStructures(DefaultMutableTreeNode top) {
+        DefaultTreeModel newModel = new DefaultTreeModel(top);
+        jobsPanel.removeAll();
 
         for (Party party : cave.getParties()) {
             DefaultMutableTreeNode partyNode = new DefaultMutableTreeNode(party.toString());
@@ -419,13 +482,22 @@ public class SorcerersCave extends JFrame implements ActionListener {
                     DefaultMutableTreeNode artifactNode = new DefaultMutableTreeNode(artifact.toString());
                     creatureNode.add(artifactNode);
                 }
+
+                for (Job job : creature.getJobs()) {
+                    JLabel creatureName = new JLabel(job.getCreatureName());
+                    JLabel jobName = new JLabel(job.getName());
+
+                    jobsPanel.add(job.getProgressBar());
+                    jobsPanel.add(creatureName);
+                    jobsPanel.add(jobName);
+                    jobsPanel.add(job.getStatusButton());
+                    jobsPanel.add(job.getPauseButton());
+                    jobsPanel.add(job.getCancelButton());
+                }
             }
         }
 
-
-    }
-
-    public void displayTree() {
-
+        internalDataStructure.setModel(newModel);
+        revalidate();
     }
 }

@@ -1,7 +1,5 @@
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
+import java.util.concurrent.PriorityBlockingQueue;
 
 // File: Cave.java
 // Date: January 25, 2015
@@ -9,7 +7,7 @@ import java.util.HashMap;
 // Purpose: The Creature class contains attributes for each creature
 //          and each artifact and treasure that it possesses
 
-public class Creature extends CaveElement {
+public class Creature extends CaveElement implements Runnable {
     private final int index;
     private String type;
     private String name;
@@ -24,6 +22,8 @@ public class Creature extends CaveElement {
     private HashMap<Integer, Treasure> treasuresKeyValue;
     private ArrayList<Artifact> artifacts;
     private HashMap<Integer, Artifact> artifactsKeyValue;
+    private ArrayList<Job> jobs;
+    private PriorityBlockingQueue<Job> pqJobs;
 
     /**
      * The complete constructor containing every possible attribute
@@ -56,6 +56,8 @@ public class Creature extends CaveElement {
         treasuresKeyValue = new HashMap<Integer, Treasure>();
         artifacts = new ArrayList<Artifact>();
         artifactsKeyValue = new HashMap<Integer, Artifact>();
+        jobs = new ArrayList<>();
+        pqJobs = new PriorityBlockingQueue<>();
     }
 
     /**
@@ -161,98 +163,187 @@ public class Creature extends CaveElement {
         treasuresKeyValue.put(treasure.getIndex(), treasure);
     }
 
-    private ArrayList<Treasure> cloneTreasures(ArrayList<Treasure> treasuresToClone) {
-        ArrayList<Treasure> clonedTreasureList = new ArrayList<Treasure>();
-
-        for (Treasure treasure : treasuresToClone)
-            clonedTreasureList.add(new Treasure(treasure));
-
-        return clonedTreasureList;
-    }
-
+    /**
+     * A method to sort the treasures by their weight field
+     */
     public void sortTreasuresByWeight() {
         Collections.sort(treasures, new TreasureWeightComparator());
     }
 
+    /**
+     * A method to sort treasures by their value field
+     */
     public void sortTreasuresByValue() {
         Collections.sort(treasures, new TreasureValueComparator());
     }
 
+    /**
+     * A method to sort Artifacts by their name field.
+     */
     public void sortArtifactByName() {
         Collections.sort(artifacts, new ArtifactNameComparator());
     }
 
+    /**
+     * A method to sort Artifacts by their type field
+     */
     public void sortArtifactsByType() {
         Collections.sort(artifacts, new ArtifactTypeComparator());
     }
 
-
+    /**
+     * Get the fear field
+     * @return fear
+     */
     public int getFear() {
         return fear;
     }
 
-    public void setFear(int value) {
+    /**
+     * Set the fear field
+     * @param fear The value of the fear field
+     */
+    public void setFear(int fear) {
         this.fear = fear;
     }
 
+    /**
+     * Get the empathy
+     * @return the empathy
+     */
     public int getEmpathy() {
         return empathy;
     }
 
+    /**
+     * Set the empathy
+     * @param empathy value of the empathy
+     */
     public void setEmpathy(int empathy) {
         this.empathy = empathy;
     }
 
+    /**
+     * Get the name
+     * @return name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Set the name
+     * @param name value of the name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Get the type
+     * @return The type
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * Set the type
+     * @param type value of the type
+     */
     public void setType(String type) {
         this.type = type;
     }
 
+    /**
+     * Get the carrying capacity
+     * @return the carrying capacity
+     */
     public int getCarryingCapacity() {
         return carryingCapacity;
     }
 
+    /**
+     * Set the carrying capacity
+     * @param carryingCapacity the value of the carrying capacity
+     */
     public void setCarryingCapacity(int carryingCapacity) {
         this.carryingCapacity = carryingCapacity;
     }
 
+    /**
+     * Get the weight
+     * @return the weight
+     */
     public double getWeight() {
         return weight;
     }
 
+    /**
+     * Set the weight
+     * @param weight value of the weight
+     */
     public void setWeight(double weight) {
         this.weight = weight;
     }
 
+    /**
+     * Get the height
+     * @return the height
+     */
     public double getHeight() {
         return height;
     }
 
+    /**
+     * Set the height
+     * @param height value of the height
+     */
     public void setHeight(double height) {
         this.height = height;
     }
 
+    /**
+     * Get the age
+     * @return the age
+     */
     public double getAge() {
         return age;
     }
 
+    /**
+     * Set the age
+     * @param age value of the age
+     */
     public void setAge(double age) {
         this.age = age;
     }
 
+    /**
+     * Get the idnex
+     * @return the index
+     */
     public int getIndex() {
         return index;
+    }
+
+    /**
+     * The toString method for Creature
+     * @return the toString representation
+     */
+
+    public void run() {
+
+    }
+
+    public void addJob(Job job) {
+        jobs.add(job);
+        Thread jobThread = new Thread(job);
+        jobThread.start();
+    }
+
+    public Iterable<Job> getJobs() {
+        return jobs;
     }
 
     public String toString() {

@@ -1,8 +1,10 @@
 import java.util.Comparator;
 
-/**
- * Created by douga_000 on 2/7/2015.
- */
+// File: CreatureNameComparator.java
+// Date: February 07, 2015
+// Author: Douglas Manzelmann
+// Purpose: The CreatureNameComparator compares two Creatures using their name field.
+
 public class CreatureNameComparator implements Comparator<Creature> {
     public int compare(Creature one, Creature two) {
         return(one.getName().compareTo(two.getName()));

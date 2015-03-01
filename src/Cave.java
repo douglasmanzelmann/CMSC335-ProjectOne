@@ -117,6 +117,10 @@ public class Cave {
         return elements;
     }
 
+    /**
+     * The toString implementation of the Cave class
+     * @return The string representation of a Cave
+     */
     public String toString() {
         return("Number of parties: " + parties.size());
     }
